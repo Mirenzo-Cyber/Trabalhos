@@ -1,1 +1,1 @@
-10,Teste,Matheus,Dev,COMPUTADORES,Nenhuma
+10,Note,Matheus,TI,NOTEBOOKS,PT (Corrigida)
