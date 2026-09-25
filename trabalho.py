@@ -171,7 +171,7 @@ def cadastrar_vulnerabilidade():
         ativos_ti[id_busca]["vulnerabilidades"].append(nova_vulnerabilidade)
         with open("ativos.txt", "w") as f:
             for id_ativo, dados in ativos_ti.items():
-                vuls_formatadas = ", ".join([f"{v['descricao']} ({v['status']})" for v in dados['vulnerabilidades']]) if dados['vulnerabilidades'] else "Nenhuma"
+                vuls_formatadas = ", ".join([f"{v['descricao']}|{v['categoria']}|{v['severidade']}|{v['status']}" for v in dados['vulnerabilidades']]) if dados['vulnerabilidades'] else "Nenhuma"
                 linha = f"{id_ativo},{dados['nome']},{dados['responsavel']},{dados['setor']},{dados['tipo']},{vuls_formatadas}\n"
                 f.write(linha)
         print("\nVulnerabilidade vinculada com sucesso ao ativo!") 
@@ -199,7 +199,7 @@ def atualizar_ativo():
 
         with open("ativos.txt", "w") as f:
             for id_ativo, dados in ativos_ti.items():
-                vuls_formatadas = ", ".join([f"{v['descricao']} ({v['status']})" for v in dados['vulnerabilidades']]) if dados['vulnerabilidades'] else "Nenhuma"
+                vuls_formatadas = ", ".join([f"{v['descricao']}|{v['categoria']}|{v['severidade']}|{v['status']}" for v in dados['vulnerabilidades']]) if dados['vulnerabilidades'] else "Nenhuma"
                 f.write(f"{id_ativo},{dados['nome']},{dados['responsavel']},{dados['setor']},{dados['tipo']},{vuls_formatadas}\n")
 
         print("\nAtivo atualizado com sucesso!")
