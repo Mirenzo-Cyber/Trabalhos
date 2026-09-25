@@ -275,7 +275,7 @@ carregar_ativos()
 opcao = ""
 
 while opcao != "7":
-    print("\n--- Sistema de Inventário de Cibersegurança ---")          
+    print("\n--- 🛡️ Sistema de Inventário de Cibersegurança 🛡️ ---")          
     print("1. Cadastrar Ativo")
     print("2. Listar Ativo")
     print("3. Atualizar Ativo")
