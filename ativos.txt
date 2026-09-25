@@ -1,1 +1,1 @@
-10,Note,Matheus,TI,NOTEBOOKS,PT (Corrigida)
+10,Teste,Matheus,Laboratório,COMPUTADORES,teste dando erro|Software desatualizado|Média|Corrigida

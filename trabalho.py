@@ -1,4 +1,6 @@
 from enum import Enum
+import sys
+sys.stdout.reconfigure(encoding='utf-8')
 
 # --- ARMAZENAMENTO NA MEMÓRIA ---
 # Dicionário principal que vai guardar todos os equipamentos enquanto o programa roda
@@ -6,7 +8,7 @@ ativos_ti = {}
 
 def carregar_ativos():
     try:
-        with open("ativos.txt", "r") as f:
+        with open("ativos.txt", "r", encoding="utf-8") as f:
             for linha in f:
                 # O .split(",", 5) garante que cortamos apenas as primeiras 5 vírgulas
                 pedacos = linha.strip().split(",", 5)
@@ -103,7 +105,7 @@ def cadastrar_ativo():
     }
 
     # 6. Processamento: Grava os mesmos dados no arquivo de texto 'ativos.txt'. 
-    with open("ativos.txt", "a") as f:
+    with open("ativos.txt", "a", encoding="utf-8") as f:
         f.write(f"{id_ativo},{nome},{responsavel},{setor},{nome_categoria},Nenhuma\n")
         
     # 7. Saída: Confirmação visual para o usuário
@@ -171,7 +173,7 @@ def cadastrar_vulnerabilidade():
         }
         
         ativos_ti[id_busca]["vulnerabilidades"].append(nova_vulnerabilidade)
-        with open("ativos.txt", "w") as f:
+        with open("ativos.txt", "a", encoding="utf-8") as f:
             for id_ativo, dados in ativos_ti.items():
                 vuls_formatadas = ", ".join([f"{v['descricao']}|{v['categoria']}|{v['severidade']}|{v['status']}" for v in dados['vulnerabilidades']]) if dados['vulnerabilidades'] else "Nenhuma"
                 linha = f"{id_ativo},{dados['nome']},{dados['responsavel']},{dados['setor']},{dados['tipo']},{vuls_formatadas}\n"
@@ -199,7 +201,7 @@ def atualizar_ativo():
         ativos_ti[id_busca]['responsavel'] = novo_responsavel
         ativos_ti[id_busca]['setor'] = novo_setor
 
-        with open("ativos.txt", "w") as f:
+        with open("ativos.txt", "w", encoding="utf-8") as f:
             for id_ativo, dados in ativos_ti.items():
                 vuls_formatadas = ", ".join([f"{v['descricao']}|{v['categoria']}|{v['severidade']}|{v['status']}" for v in dados['vulnerabilidades']]) if dados['vulnerabilidades'] else "Nenhuma"
                 f.write(f"{id_ativo},{dados['nome']},{dados['responsavel']},{dados['setor']},{dados['tipo']},{vuls_formatadas}\n")
@@ -259,7 +261,7 @@ def atualizar_vulnerabilidade():
             novo_status = pedir_texto_obrigatorio("Digite o novo status (Aberta, Em tratamento, Corrigida, Risco Aceito): ")
             vulnerabilidades[escolha - 1]['status'] = novo_status
             
-            with open("ativos.txt", "w") as f:
+            with open("ativos.txt", "w", encoding="utf-8") as f:
                 for id_ativo, dados in ativos_ti.items():
                     vuls_formatadas = ", ".join([f"{v['descricao']}|{v['categoria']}|{v['severidade']}|{v['status']}" for v in dados['vulnerabilidades']]) if dados['vulnerabilidades'] else "Nenhuma"
                     f.write(f"{id_ativo},{dados['nome']},{dados['responsavel']},{dados['setor']},{dados['tipo']},{vuls_formatadas}\n")
