@@ -26,18 +26,13 @@ def carregar_ativos():
                         # Separa as vulnerabilidades se houver mais de uma (separadas por ", ")
                         vuls_separadas = texto_vuls.split(", ")
                         for v_str in vuls_separadas:
-                            # Tenta encontrar onde começa o parênteses do status
-                            if " (" in v_str and v_str.endswith(")"):
-                                # Corta o texto na última ocorrência de " ("
-                                partes = v_str.rsplit(" (", 1)
-                                descricao = partes[0]
-                                status = partes[1].replace(")", "") # Remove o último parênteses
-                                
+                            partes = v_str.split("|") # Corta usando a barra vertical
+                            if len(partes) == 4:
                                 lista_vuls.append({
-                                    "descricao": descricao,
-                                    "categoria": "Carregada do txt", # Dado não salvo no txt
-                                    "severidade": "Não informada",   # Dado não salvo no txt
-                                    "status": status
+                                    "descricao": partes[0],
+                                    "categoria": partes[1],
+                                    "severidade": partes[2],
+                                    "status": partes[3]
                                 })
                     
                     # Convertendo o id_str para número e guardando no dicionário
@@ -51,6 +46,7 @@ def carregar_ativos():
     except FileNotFoundError:
         # Se o ficheiro não existir, o programa simplesmente ignora e continua
         pass
+
 def pedir_texto_obrigatorio(mensagem):
     texto = input(mensagem)
     while not texto.strip():
@@ -81,7 +77,7 @@ def cadastrar_ativo():
         print("Erro: ID já cadastrado. O ativo não será cadastrado.")
         return  
 
-    # 2. Entrada de Dados: Recebe os textos normais digitados pelo usuário
+    # 2. Entrada de Dados: Recebe os textos validados
     nome = pedir_texto_obrigatorio("Digite o nome do ativo: ") 
     responsavel = pedir_texto_obrigatorio("Digite o nome do responsável pelo ativo: ")
     setor = pedir_texto_obrigatorio("Digite o setor do ativo: ")
@@ -146,7 +142,7 @@ def listar_ativo():
         else:
             print(f"\n--- Vulnerabilidades encontradas ({len(vulnerabilidades)}) ---")
             for contador, vulnerabilidade in enumerate(vulnerabilidades, start=1):
-                print(f"{contador}. {vulnerabilidade['descricao']} - Status: {vulnerabilidade['status']}")
+                print(f"{contador}. {vulnerabilidade['descricao']} (Severidade: {vulnerabilidade['severidade']}) - Status: {vulnerabilidade['status']}")
     else:
         print("\nErro: Nenhum ativo encontrado com esta busca.")
 
@@ -162,10 +158,10 @@ def cadastrar_vulnerabilidade():
     if id_busca in ativos_ti:
         print(f"Ativo selecionado: {ativos_ti[id_busca]['nome']}")
         
-        descricao = input("Descrição do problema: ")
-        categoria = input("Categoria/Tipo (ex: Senha fraca, Software desatualizado): ")
-        severidade = input("Severidade (Baixa, Média, Alta, Crítica): ")
-        status = input("Status (Aberta, Em tratamento, Corrigida, Risco Aceito): ")
+        descricao = pedir_texto_obrigatorio("Descrição do problema: ")
+        categoria = pedir_texto_obrigatorio("Categoria/Tipo (ex: Senha fraca, Software desatualizado): ")
+        severidade = pedir_texto_obrigatorio("Severidade (Baixa, Média, Alta, Crítica): ")
+        status = pedir_texto_obrigatorio("Status (Aberta, Em tratamento, Corrigida, Risco Aceito): ")
         
         nova_vulnerabilidade = {
             "descricao": descricao,
@@ -197,8 +193,8 @@ def atualizar_ativo():
         ativo = ativos_ti[id_busca]
         print(f"Ativo encontrado: {ativo['nome']}")
 
-        novo_responsavel = input(f"Digite o novo responsável do ativo ({ativo['nome']}): ")
-        novo_setor = input(f"Digite o novo setor do ativo ({ativo['nome']}): ")
+        novo_responsavel = pedir_texto_obrigatorio(f"Digite o novo responsável do ativo ({ativo['nome']}): ")
+        novo_setor = pedir_texto_obrigatorio(f"Digite o novo setor do ativo ({ativo['nome']}): ")
 
         ativos_ti[id_busca]['responsavel'] = novo_responsavel
         ativos_ti[id_busca]['setor'] = novo_setor
@@ -227,7 +223,7 @@ def excluir_ativo():
 
         with open("ativos.txt", "w") as f:
             for id_ativo, dados in ativos_ti.items():
-                vuls_formatadas = ", ".join([f"{v['descricao']} ({v['status']})" for v in dados['vulnerabilidades']]) if dados['vulnerabilidades'] else "Nenhuma"
+                vuls_formatadas = ", ".join([f"{v['descricao']}|{v['categoria']}|{v['severidade']}|{v['status']}" for v in dados['vulnerabilidades']]) if dados['vulnerabilidades'] else "Nenhuma"
                 f.write(f"{id_ativo},{dados['nome']},{dados['responsavel']},{dados['setor']},{dados['tipo']},{vuls_formatadas}\n")
 
         print("\nAtivo excluído com sucesso!")
@@ -260,12 +256,12 @@ def atualizar_vulnerabilidade():
             return
         
         if 1 <= escolha <= len(vulnerabilidades):
-            novo_status = input("Digite o novo status (Aberta, Em tratamento, Corrigida, Risco Aceito): ")
+            novo_status = pedir_texto_obrigatorio("Digite o novo status (Aberta, Em tratamento, Corrigida, Risco Aceito): ")
             vulnerabilidades[escolha - 1]['status'] = novo_status
             
             with open("ativos.txt", "w") as f:
                 for id_ativo, dados in ativos_ti.items():
-                    vuls_formatadas = ", ".join([f"{v['descricao']} ({v['status']})" for v in dados['vulnerabilidades']]) if dados['vulnerabilidades'] else "Nenhuma"
+                    vuls_formatadas = ", ".join([f"{v['descricao']}|{v['categoria']}|{v['severidade']}|{v['status']}" for v in dados['vulnerabilidades']]) if dados['vulnerabilidades'] else "Nenhuma"
                     f.write(f"{id_ativo},{dados['nome']},{dados['responsavel']},{dados['setor']},{dados['tipo']},{vuls_formatadas}\n")
             
             print("\nStatus da vulnerabilidade atualizado com sucesso!")
