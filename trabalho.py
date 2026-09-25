@@ -51,6 +51,12 @@ def carregar_ativos():
     except FileNotFoundError:
         # Se o ficheiro não existir, o programa simplesmente ignora e continua
         pass
+def pedir_texto_obrigatorio(mensagem):
+    texto = input(mensagem)
+    while not texto.strip():
+        print("Erro: O campo não pode ficar vazio.")
+        texto = input(mensagem)
+    return texto.strip()
 
 # Estrutura de enumeração para as categorias de ativos, facilitando a validação e evitando erros de digitação
 class CategoriasAtivos(Enum):
@@ -76,9 +82,9 @@ def cadastrar_ativo():
         return  
 
     # 2. Entrada de Dados: Recebe os textos normais digitados pelo usuário
-    nome = input("Digite o nome do ativo: ") 
-    responsavel = input("Digite o nome do responsável pelo ativo: ")
-    setor = input("Digite o setor do ativo: ")
+    nome = pedir_texto_obrigatorio("Digite o nome do ativo: ") 
+    responsavel = pedir_texto_obrigatorio("Digite o nome do responsável pelo ativo: ")
+    setor = pedir_texto_obrigatorio("Digite o setor do ativo: ")
 
     # 3. Entrada de Dados e Decisão Lógica: Pede o tipo de ativo e tenta buscar o nome da categoria no Enum.
     try:
